@@ -46,7 +46,7 @@ Commands:
 
 const (
 	coin    = 100000000
-	version = "0.1.0"
+	version = "0.1.1"
 )
 
 func main() {
@@ -262,7 +262,7 @@ func loadCollectorConfig(cfg config) (col.Config, error) {
 	// Wrap getState with a timer
 	reservoirSize := 60 / cfg.Collect.PollPeriod * 60 * 24 // About one day's worth
 	getStateTimer := metrics.NewCustomTimer(metrics.NewHistogram(
-		metrics.NewExpDecaySample(reservoirSize, 0)), metrics.NewMeter())
+		metrics.NewSimpleExpDecaySample(reservoirSize)), metrics.NewMeter())
 	timedGetState := func() (*col.MempoolState, error) {
 		start := time.Now()
 		defer getStateTimer.UpdateSince(start)

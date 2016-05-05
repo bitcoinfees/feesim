@@ -342,7 +342,7 @@ func (s *FeeSim) loopSim(period int) {
 	sizes := []int{1, 60, 1440}
 	simTimers := make([]metrics.Timer, 3)
 	for i, size := range sizes {
-		h := metrics.NewHistogram(metrics.NewExpDecaySample(size, 0))
+		h := metrics.NewHistogram(metrics.NewSimpleExpDecaySample(size))
 		simTimers[i] = metrics.NewCustomTimer(h, metrics.NewMeter())
 		metrics.Register(names[i], simTimers[i])
 	}

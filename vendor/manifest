@@ -106,10 +106,10 @@
 		},
 		{
 			"importpath": "github.com/rcrowley/go-metrics",
-			"repository": "https://github.com/rcrowley/go-metrics",
+			"repository": "https://github.com/bitcoinfees/go-metrics",
 			"vcs": "git",
-			"revision": "eeba7bd0dd01ace6e690fa833b3f22aaec29af43",
-			"branch": "master",
+			"revision": "dd746132f25606287e136cb1372e79de402f5ccf",
+			"branch": "simpleexpsample",
 			"notests": true
 		},
 		{

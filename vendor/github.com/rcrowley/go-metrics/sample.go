@@ -29,6 +29,39 @@ type Sample interface {
 	Variance() float64
 }
 
+// SimpleExpDecaySample is a simple ExpDecaySample, with only a reservoirSize
+// parameter. When the reservoir is full, and old sample is chosen at random
+// and ejected; thus the probability each sample remaining in the reservoir
+// decays exponentially with time.
+type SimpleExpDecaySample struct {
+	*UniformSample
+}
+
+// NewSimpleExpDecaySample constructs a new simple exp decay sample with the
+// given reservoir size.
+func NewSimpleExpDecaySample(reservoirSize int) Sample {
+	if UseNilMetrics {
+		return NilSample{}
+	}
+	return &SimpleExpDecaySample{
+		UniformSample: &UniformSample{
+			reservoirSize: reservoirSize,
+			values:        make([]int64, 0, reservoirSize),
+		},
+	}
+}
+
+func (s *SimpleExpDecaySample) Update(v int64) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	s.count++
+	if i := rand.Intn(s.reservoirSize); i < len(s.values) {
+		s.values[i] = v
+	} else {
+		s.values = append(s.values, v)
+	}
+}
+
 // ExpDecaySample is an exponentially-decaying sample using a forward-decaying
 // priority reservoir.  See Cormode et al's "Forward Decay: A Practical Time
 // Decay Model for Streaming Systems".

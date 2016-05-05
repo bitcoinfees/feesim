@@ -24,12 +24,15 @@ fees during the lull periods.
 Feesim collects Bitcoin network data through the Bitcoin Core JSON-RPC API, and
 computes estimates for:
 * The network hashrate
-* The distribution of max block size and min fee rate
+* The distribution of max block size and min fee rate ("mining policy")
 * Short-term transaction arrival rate / joint distribution of `(txFeerate,
   txSize)`
 
 Together with the current mempool state, these are used to perform the
-simulation and obtain the fee estimates.
+simulation and obtain the fee estimates. Mining policy estimates can be seen
+[here](https://bitcoinfees.github.io/misc/mining), and transaction arrival
+byte rates as a function of fee rate can be seen
+[here](https://bitcoinfees.github.io/misc/profile).
 
 ### Model validation
 During normal operation, Feesim will predict the confirmation time of each
@@ -54,8 +57,8 @@ The RPC settings should be specified in `config.yml`, as such:
 bitcoinrpc:
     username: myusername
     password: mypassword
-    # host: myhost # Required if not localhost
-    # port: myport # Required if not 8332
+    # host: localhost
+    # port: 8332
 ```
 The config file should be placed in the data directory:
 * Linux: `~/.feesim`

@@ -54,7 +54,7 @@ var (
 		BitcoinRPC: corerpc.Config{
 			Host:    "localhost",
 			Port:    "8332",
-			Timeout: 15,
+			Timeout: 30,
 		},
 		AppRPC: AppRPCConfig{
 			Host: "localhost",
