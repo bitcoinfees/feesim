@@ -1,0 +1,76 @@
+# Example config file, showing the defaults.
+
+# Bitcoin Core JSON-RPC config
+bitcoinrpc:
+    host: localhost
+    port: 8332
+    timeout: 30 # HTTP timeout in seconds
+    # username: myrpcusername
+    # password: myrpcpassword
+
+# Address to bind to for the Feesim HTTP JSON-RPC API.
+apprpc:
+    host: localhost
+    port: 8350
+
+# datadir: see README for defaults
+# logfile: feesim.log in datadir
+
+# Run the sim (i.e. update the fee estimates) every simperiod seconds.
+simperiod: 60
+
+collect:
+    # Period in seconds for data polling of Bitcoin Core. A call to
+    # getrawmempool / getblockcount is made every pollperiod seconds.
+    pollperiod: 10
+
+# The fee estimation simulation ("transient" as opposed to "steady-state")
+transient:
+    # Max confirmation time (in blocks) to produce fee estimates for
+    maxblockconfirms: 12
+    # "Confirmation in N blocks" is with respect to this probability
+    minsuccesspct: 0.9
+    # Number of iterations per simulation run. Decreasing this number will
+    # decrease sim run time but increase result variance.
+    numiters: 10000
+
+# Prediction tallying for model validation
+predict:
+    # Max confirmation time to tally predictions for
+    maxblockconfirms: 6
+    # Halflife (in blocks) of the exponential decay of the tally
+    halflife: 1008
+
+# When rebooting, Feesim will use past transactions to estimate a tx source,
+# unless the most recent tx is older than txgaptol seconds.
+txgaptol: 3600
+
+# Length of time in seconds to store past transactions for. This only concerns
+# tx source estimation, and only after rebooting.
+txmaxage: 10800
+
+# The tx source estimation algorithm ("uniform tx").
+unitx:
+    # There must be at least minwindow seconds of transaction data for
+    # estimation to take place.
+    minwindow: 600
+    # When rebooting, use at most maxwindow of past transactions to estimate the
+    # tx source.
+    maxwindow: 10800
+    # The halflife in seconds of the exponentially decaying reservoir for tx
+    # sampling.
+    halflife: 3600
+
+# The block source estimation algorithm ("independent block")
+indblock:
+    # Use the past <window> blocks in the estimation
+    window: 2016
+    # Require at least mincov*window blocks of data before proceeding with
+    # estimation
+    mincov: 0.5
+    # Exclude data from blocks that are discovered within <guardinterval>
+    # seconds of the previous one.
+    guardinterval: 300
+    # The tail percentage of block data to use to obtain min fee rates and max
+    # block sizes.
+    tailpct: 0.1

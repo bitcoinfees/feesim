@@ -1,0 +1,38 @@
+This is the test data directory.
+
+Currently contains the following:
+
+###############################################################################
+blocks.json - used by the test (pseudo) rpc server, in the format
+
+{
+    "blockhashes": {
+        "<height>": "<hex encoded block hash>"
+        ...
+    },
+    "blocks": {
+        "<hex encoded block hash>": "<hex encoded block>"
+        ...
+    }
+}
+
+for the following heights:
+
+333931-333953, 334655-334656 (difficulty transition)
+
+###############################################################################
+mempool.json, preset mempool data, structured as
+{
+    "<height>": {
+        <result of getrawmempool verbose=true>
+    }
+    ...
+}
+
+for the following heights:
+333931, 333932, 333936-333953
+
+###############################################################################
+pools.json and txsource.json
+
+Sim test data, used in transient_test.go
