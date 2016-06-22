@@ -73,6 +73,8 @@ type TxSource interface {
 type BlockSource interface {
 	Next() (t time.Duration, b BlockPolicy)
 
+	BlockRate() float64 // Blocks per second
+
 	// Return n copies of this source, which must have isolated random states.
 	// This is so that:
 	//     1. The source will be concurrent-safe.

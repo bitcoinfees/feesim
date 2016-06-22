@@ -25,7 +25,7 @@ type TransientSim struct {
 	cfg TransientConfig
 
 	// Lowest fee rate for which conf times will be estimated.
-	// It's max(s.StableFee(), c.LowestFeeRate)
+	// It's max(sim.StableFee(), cfg.LowestFeeRate)
 	lowestfee FeeRate
 
 	// Used to stop the sim, ans also to signify that Run has been called, since

@@ -38,6 +38,10 @@ func (b *IndBlockSource) Next() (t time.Duration, p BlockPolicy) {
 	return
 }
 
+func (b *IndBlockSource) BlockRate() float64 {
+	return b.blockrate
+}
+
 func (b *IndBlockSource) Copy(n int) []BlockSource {
 	bb := make([]BlockSource, n)
 	r := getrand(n + 1)

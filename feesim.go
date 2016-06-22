@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"math"
+	"sort"
 	"sync"
 	"time"
 
@@ -405,6 +406,8 @@ func (s *FeeSim) loopSim(period int) {
 }
 
 func (s *FeeSim) setupSim() (*sim.TransientSim, error) {
+	logger := s.cfg.logger
+
 	state := s.collect.State()
 	if state == nil {
 		return nil, errors.New("mempool state not available")
@@ -417,15 +420,55 @@ func (s *FeeSim) setupSim() (*sim.TransientSim, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// Trim the mempool to optimize sim time. The idea is that since we're only
+	// simulating up to a certain MaxBlockConfirms, we can safely ignore many
+	// low fee transactions.
+	maxBlockConfirms := s.cfg.Transient.MaxBlockConfirms
+	txratefn, capratefn, sizefn := txsource.RateFn(), blocksource.RateFn(), state.SizeFn()
+
+	maxcap := capratefn.Eval(math.MaxFloat64) // Maximum capacity byte rate
+
+	highfee := sizefn.Inverse(0)
+	var n int
+	if highfee > float64(math.MaxInt32) {
+		n = math.MaxInt32
+	} else {
+		n = int(highfee)
+	}
+
+	cutoff := sim.FeeRate(sort.Search(n, func(i int) bool {
+		d := sizefn.Eval(float64(i)) / (maxcap - txratefn.Eval(float64(i))) * blocksource.BlockRate()
+		const buffer = 3
+		return d < buffer*float64(maxBlockConfirms) && d >= 0
+	}))
+
 	initmempool, err := col.SimifyMempool(state.Entries)
 	if err != nil {
+		logger.Println("[ERROR] SimifyMempool:", err)
 		return nil, err
 	}
 
-	// TODO: choose a better low fee rate
-	ns := sim.NewSim(txsource, blocksource, initmempool)
-	s.cfg.logger.Println("[DEBUG] Transient sim stablefeerate:", ns.StableFee())
-	return sim.NewTransientSim(ns, s.cfg.Transient), nil
+	// Remove all transactions with fee rate less than cutoff. We remove all the
+	// parents as well, although it's not strictly necessary since it's done in
+	// sim.NewSim as well (the model does not consider mempool deps anymore
+	// CPFP, see sim.NewSim). However, we do it for neatness' sake, to avoid
+	// dangling deps.
+	var initmempoolTrimmed []*sim.Tx
+	for _, tx := range initmempool {
+		if tx.FeeRate >= cutoff {
+			tx.Parents = tx.Parents[:0]
+			initmempoolTrimmed = append(initmempoolTrimmed, tx)
+		}
+	}
+
+	ns := sim.NewSim(txsource, blocksource, initmempoolTrimmed)
+	transientCfg := s.cfg.Transient
+	transientCfg.LowestFeeRate = cutoff
+	logger.Println("[DEBUG] Transient sim stablefeerate:", ns.StableFee())
+	logger.Println("[DEBUG] Transient sim lowfee:", transientCfg.LowestFeeRate)
+
+	return sim.NewTransientSim(ns, transientCfg), nil
 }
 
 func (s *FeeSim) IsPaused() bool {
