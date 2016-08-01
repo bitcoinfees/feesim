@@ -101,7 +101,7 @@ func (s *FeeSim) Run() error {
 	defer s.blkdb.Close()
 	defer s.txdb.Close()
 
-	logger.Println("Feesim starting up..")
+	logger.Printf("Feesim v%s starting up..", version)
 	state, err := s.cfg.Collect.GetState()
 	if err != nil {
 		return err

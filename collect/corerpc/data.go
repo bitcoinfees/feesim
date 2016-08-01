@@ -1,10 +1,7 @@
 package corerpc
 
 import (
-	"math"
-
 	"github.com/bitcoinfees/feesim/sim"
-	"github.com/btcsuite/btcutil"
 )
 
 const (
@@ -46,53 +43,31 @@ func (m *MempoolEntry) IsHighPriority() bool {
 }
 
 type block struct {
-	*btcutil.Block
+	Height_    int64    `json:"height"`
+	Size_      int64    `json:"size"`
+	Txids_     []string `json:"tx"`
+	Difficulty float64  `json:"difficulty"`
 }
 
-// Wrap btcutil.NewBlockFromBytes
-func newBlockFromBytes(blockbytes []byte, height int64) (*block, error) {
-	b, err := btcutil.NewBlockFromBytes(blockbytes)
-	if err != nil {
-		return nil, err
-	}
-	b.SetHeight(int32(height))
-	return &block{b}, nil
-}
-
+// Height returns the block height.
 func (b *block) Height() int64 {
-	return int64(b.Block.Height())
+	return b.Height_
 }
 
-// Return the block size
+// Size returns the block size.
 func (b *block) Size() int64 {
-	return int64(b.MsgBlock().SerializeSize())
+	return b.Size_
 }
 
-// txids returns a sorted slice of block txids
+// Txids returns a slice of the block txids. User is free to do whatever with it,
+// as a copy is made each time.
 func (b *block) Txids() []string {
-	txs := b.Transactions()
-	txids := make([]string, len(txs))
-	for i, tx := range txs {
-		txids[i] = tx.Sha().String()
-	}
+	txids := make([]string, len(b.Txids_))
+	copy(txids, b.Txids_)
 	return txids
 }
 
 // Calculate expected number of hashes needed to solve this block
 func (b *block) NumHashes() float64 {
-	nbits := b.MsgBlock().Header.Bits
-	significand := 0xffffff & nbits
-	exponent := (nbits>>24 - 3) * 8
-	logtarget := math.Log2(float64(significand)) + float64(exponent)
-
-	return math.Pow(2, 256-logtarget)
-}
-
-// Get the scriptsig of the coinbase transaction of a block
-func (b *block) Tag() []byte {
-	tx, err := b.Tx(0)
-	if err != nil {
-		panic("Shouldn't happen, because the only possible error is index out-of-range.")
-	}
-	return tx.MsgTx().TxIn[0].SignatureScript
+	return b.Difficulty * 4295032833.000015
 }

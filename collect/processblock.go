@@ -122,10 +122,9 @@ func processBlock(prev, curr *MempoolState, getBlock BlockGetter, logger *log.Lo
 			stxs = append(stxs, stx)
 		}
 		b[i].SFRStat = stxs.StrandingFeeRate(prev.MinFeeRate)
-		logger.Printf("Block %d: %d S, %d RS, %d MSR, %d MLT, %s, %s",
+		logger.Printf("Block %d: %d S, %d RS, %d MSR, %d MLT, %s",
 			b[i].Height, blocks[i].Size(), b[i].MempoolSize-b[i].MempoolSizeRemain,
-			b[i].MempoolSizeRemain, minLeadTime[i], b[i].SFRStat,
-			printable(string(blocks[i].Tag())))
+			b[i].MempoolSizeRemain, minLeadTime[i], b[i].SFRStat)
 	}
 
 	return b, blocks, nil

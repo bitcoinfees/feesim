@@ -131,15 +131,25 @@ func TestRPC(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	blockBytes, err := block.Bytes()
-	if err != nil {
-		t.Fatal(err)
-	}
 	if err := testutil.CheckEqual(block.Height(), height); err != nil {
 		t.Error(err)
 	}
-	t.Log("Blocksize:", len(blockBytes))
-	if len(blockBytes) == 0 {
+
+	blocksize := block.Size()
+	numhashes := block.NumHashes()
+	txids := block.Txids()
+	t.Log("blocksize:", blocksize)
+	if blocksize == 0 {
 		t.Error("zero size block")
+	}
+	t.Log("numhashes:", numhashes)
+	if numhashes == 0 {
+		t.Error("numhashes is 0")
+	}
+	t.Log("num txs:", len(txids))
+	if len(txids) == 0 {
+		t.Error("len txs is 0")
+	} else {
+		t.Log("first txid:", txids[0])
 	}
 }

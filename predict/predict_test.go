@@ -222,11 +222,6 @@ func (b *testBlock) NumHashes() float64 {
 	return 0
 }
 
-func (b *testBlock) Tag() []byte {
-	// Not relevant
-	return nil
-}
-
 type testMempoolEntry struct {
 	*testutil.MempoolEntry
 }

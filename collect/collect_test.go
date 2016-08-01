@@ -195,7 +195,7 @@ func (d *MockBlockStatDB) Put(b []*est.BlockStat) error {
 	b_ref := []*est.BlockStat{
 		{
 			Height:            333931,
-			NumHashes:         1.718333983803829e+20,
+			NumHashes:         1.718333983803821e+20,
 			Size:              153669,
 			Time:              b[0].Time,
 			MempoolSize:       681121,

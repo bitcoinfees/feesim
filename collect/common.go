@@ -13,7 +13,6 @@ type Block interface {
 	Size() int64
 	Txids() []string
 	NumHashes() float64
-	Tag() []byte
 }
 
 type MempoolEntry interface {

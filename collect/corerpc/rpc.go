@@ -4,7 +4,6 @@ package corerpc
 
 import (
 	"bytes"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -118,30 +117,21 @@ func (c *client) getBlockHash(height int64) (hash string, err error) {
 }
 
 // Get a Block by height
-func (c *client) getBlock(height int64) (b *block, err error) {
+func (c *client) getBlock(height int64) (*block, error) {
 	hash, err := c.getBlockHash(height)
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	req := c.newRequest("getblock", []interface{}{hash, false})
+	req := c.newRequest("getblock", []interface{}{hash, true})
 	resp, err := c.send(req)
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	var blockhex string
-	err = json.Unmarshal(resp, &blockhex)
-	if err != nil {
-		return
-	}
-
-	blockbytes, err := hex.DecodeString(blockhex)
-	if err != nil {
-		return
-	}
-
-	return newBlockFromBytes(blockbytes, height)
+	b := new(block)
+	err = json.Unmarshal(resp, b)
+	return b, err
 }
 
 // Batch request for getrawmempool and getblockcount

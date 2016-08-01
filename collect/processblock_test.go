@@ -30,7 +30,7 @@ func TestProcessBlock(t *testing.T) {
 	b_ref := []*est.BlockStat{
 		{
 			Height:            height,
-			NumHashes:         1.718333983803829e+20,
+			NumHashes:         1.718333983803821e+20,
 			Size:              153669,
 			Time:              prev.Time,
 			MempoolSize:       681121,
@@ -105,7 +105,7 @@ func TestProcessBlock(t *testing.T) {
 	b_ref = []*est.BlockStat{
 		{
 			Height:            height,
-			NumHashes:         1.718333983803829e+20,
+			NumHashes:         1.718333983803821e+20,
 			Size:              153669,
 			Time:              b[0].Time,
 			MempoolSize:       681121,
@@ -120,7 +120,7 @@ func TestProcessBlock(t *testing.T) {
 		},
 		{
 			Height:            height + 1,
-			NumHashes:         1.718333983803829e+20,
+			NumHashes:         1.718333983803821e+20,
 			Size:              499062,
 			Time:              b[0].Time,
 			MempoolSize:       535628,
@@ -135,7 +135,7 @@ func TestProcessBlock(t *testing.T) {
 		},
 		{
 			Height:            height + 2,
-			NumHashes:         1.718333983803829e+20,
+			NumHashes:         1.718333983803821e+20,
 			Size:              642771,
 			Time:              b[0].Time,
 			MempoolSize:       55677,

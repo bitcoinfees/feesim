@@ -2,97 +2,10 @@
 	"version": 0,
 	"dependencies": [
 		{
-			"importpath": "github.com/btcsuite/btcd/blockchain",
-			"repository": "https://github.com/btcsuite/btcd",
+			"importpath": "github.com/boltdb/bolt",
+			"repository": "https://github.com/boltdb/bolt",
 			"vcs": "git",
-			"revision": "0d7f52660096c5a22f2cb95c102e0693f773a593",
-			"branch": "master",
-			"path": "/blockchain",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/btcsuite/btcd/btcec",
-			"repository": "https://github.com/btcsuite/btcd",
-			"vcs": "git",
-			"revision": "0d7f52660096c5a22f2cb95c102e0693f773a593",
-			"branch": "master",
-			"path": "/btcec",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/btcsuite/btcd/chaincfg",
-			"repository": "https://github.com/btcsuite/btcd",
-			"vcs": "git",
-			"revision": "0d7f52660096c5a22f2cb95c102e0693f773a593",
-			"branch": "master",
-			"path": "/chaincfg",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/btcsuite/btcd/database",
-			"repository": "https://github.com/btcsuite/btcd",
-			"vcs": "git",
-			"revision": "0d7f52660096c5a22f2cb95c102e0693f773a593",
-			"branch": "master",
-			"path": "/database",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/btcsuite/btcd/txscript",
-			"repository": "https://github.com/btcsuite/btcd",
-			"vcs": "git",
-			"revision": "0d7f52660096c5a22f2cb95c102e0693f773a593",
-			"branch": "master",
-			"path": "/txscript",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/btcsuite/btcd/wire",
-			"repository": "https://github.com/btcsuite/btcd",
-			"vcs": "git",
-			"revision": "0d7f52660096c5a22f2cb95c102e0693f773a593",
-			"branch": "master",
-			"path": "/wire",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/btcsuite/btclog",
-			"repository": "https://github.com/btcsuite/btclog",
-			"vcs": "git",
-			"revision": "f96df2375f37300305f329b8e5258764b4f19a7f",
-			"branch": "master",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/btcsuite/btcutil",
-			"repository": "https://github.com/btcsuite/btcutil",
-			"vcs": "git",
-			"revision": "2c26dd81a59fd671a2218d63ad138a6dd4d693bd",
-			"branch": "master",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/btcsuite/fastsha256",
-			"repository": "https://github.com/btcsuite/fastsha256",
-			"vcs": "git",
-			"revision": "302ad4db268b46f9ebda3078f6f7397f96047735",
-			"branch": "master",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/btcsuite/golangcrypto/ripemd160",
-			"repository": "https://github.com/btcsuite/golangcrypto",
-			"vcs": "git",
-			"revision": "53f62d9b43e87a6c56975cf862af7edf33a8d0df",
-			"branch": "master",
-			"path": "/ripemd160",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/btcsuite/seelog",
-			"repository": "https://github.com/btcsuite/seelog",
-			"vcs": "git",
-			"revision": "313961b101eb55f65ae0f03ddd4e322731763b6c",
+			"revision": "94c8db596809690a3f7046fa83c7b0dda13a3222",
 			"branch": "master",
 			"notests": true
 		},
@@ -118,6 +31,15 @@
 			"vcs": "git",
 			"revision": "91dfa3a59c5b233fef9a346a1460f6e2bc889d93",
 			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "golang.org/x/sys/unix",
+			"repository": "https://go.googlesource.com/sys",
+			"vcs": "git",
+			"revision": "a646d33e2ee3172a661fc09bca23bb4889a41bc8",
+			"branch": "master",
+			"path": "/unix",
 			"notests": true
 		},
 		{

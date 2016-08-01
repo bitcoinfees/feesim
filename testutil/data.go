@@ -1,14 +1,11 @@
 package testutil
 
 import (
-	"encoding/hex"
 	"encoding/json"
-	"math"
+	"errors"
 	"os"
 	"path/filepath"
 	"strconv"
-
-	"github.com/btcsuite/btcutil"
 )
 
 const (
@@ -17,8 +14,9 @@ const (
 )
 
 var (
-	BlockData   map[string]map[string]string
-	MempoolData map[string]map[string]*MempoolEntry
+	BlockData     map[string]*Block
+	BlockHashData map[string]string
+	MempoolData   map[string]map[string]*MempoolEntry
 )
 
 func LoadData(datadir string) {
@@ -42,73 +40,16 @@ func LoadData(datadir string) {
 	if err != nil {
 		panic(err)
 	}
-}
 
-func GetBlockBytes(height int64) []byte {
-	heightstr := strconv.Itoa(int(height))
-	blockhash := BlockData["blockhashes"][heightstr]
-	blockhex := BlockData["blocks"][blockhash]
-	blockbytes, err := hex.DecodeString(blockhex)
+	f3, err := os.Open(filepath.Join(datadir, "blockhashes.json"))
 	if err != nil {
 		panic(err)
 	}
-	return blockbytes
-}
-
-func GetBlock(height int64) (*Block, error) {
-	blockbytes := GetBlockBytes(height)
-	return NewBlockFromBytes(blockbytes, height)
-}
-
-type Block struct {
-	*btcutil.Block
-}
-
-func NewBlockFromBytes(blockbytes []byte, height int64) (*Block, error) {
-	b, err := btcutil.NewBlockFromBytes(blockbytes)
+	defer f3.Close()
+	err = json.NewDecoder(f3).Decode(&BlockHashData)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-	b.SetHeight(int32(height))
-	return &Block{b}, nil
-}
-
-func (b *Block) Height() int64 {
-	return int64(b.Block.Height())
-}
-
-// Return the block size
-func (b *Block) Size() int64 {
-	return int64(b.MsgBlock().SerializeSize())
-}
-
-// txids returns a sorted slice of block txids
-func (b *Block) Txids() []string {
-	txs := b.Transactions()
-	txids := make([]string, len(txs))
-	for i, tx := range txs {
-		txids[i] = tx.Sha().String()
-	}
-	return txids
-}
-
-// Calculate expected number of hashes needed to solve this block
-func (b *Block) NumHashes() float64 {
-	nbits := b.MsgBlock().Header.Bits
-	significand := 0xffffff & nbits
-	exponent := (nbits>>24 - 3) * 8
-	logtarget := math.Log2(float64(significand)) + float64(exponent)
-
-	return math.Pow(2, 256-logtarget)
-}
-
-// Get the scriptsig of the coinbase transaction of a block
-func (b *Block) Tag() []byte {
-	tx, err := b.Tx(0)
-	if err != nil {
-		panic("Shouldn't happen, because the only possible error is index out-of-range.")
-	}
-	return tx.MsgTx().TxIn[0].SignatureScript
 }
 
 type MempoolEntry struct {
@@ -129,4 +70,48 @@ func (m *MempoolEntry) FeeRate() int64 {
 // estimate miner's min fee rate policies.
 func (m *MempoolEntry) IsHighPriority() bool {
 	return m.CurrentPriority > priorityThresh
+}
+
+type Block struct {
+	Height_    int64    `json:"height"`
+	Size_      int64    `json:"size"`
+	Txids_     []string `json:"tx"`
+	Difficulty float64  `json:"difficulty"`
+}
+
+// Height returns the block height.
+func (b *Block) Height() int64 {
+	return b.Height_
+}
+
+// Size returns the block size.
+func (b *Block) Size() int64 {
+	return b.Size_
+}
+
+// Txids returns a slice of the block txids. User is free to do whatever with it,
+// as a copy is made each time.
+func (b *Block) Txids() []string {
+	txids := make([]string, len(b.Txids_))
+	copy(txids, b.Txids_)
+	return txids
+}
+
+// Calculate expected number of hashes needed to solve this block
+func (b *Block) NumHashes() float64 {
+	return b.Difficulty * 4295032833.000015
+}
+
+func GetBlock(height int64) (*Block, error) {
+	heightstr := strconv.Itoa(int(height))
+	hash := BlockHashData[heightstr]
+	if hash == "" {
+		return nil, errors.New("block data not available")
+	}
+
+	b := BlockData[hash]
+	if b == nil {
+		panic("block data missing")
+	}
+	return b, nil
 }
