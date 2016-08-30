@@ -54,19 +54,19 @@ func TestSimSFR(t *testing.T) {
 	txsource := NewMultiTxSource(nil, nil, nil, 0)
 	sim := NewSim(txsource, blocksource, initmempool)
 
-	// This ref data obtained from an earlier implementation
+	// Updated, post-CPFP, ref data
 	sfrsRef := []FeeRate{
 		44248,
-		38462,
-		22884,
-		21187,
-		16156,
-		13840,
-		11423,
-		11199,
-		11249,
-		10961,
-		10194,
+		38611,
+		26738,
+		22728,
+		19194,
+		14567,
+		13563,
+		12579,
+		11631,
+		11279,
+		10225,
 		10000,
 	}
 	for _, sfrRef := range sfrsRef {

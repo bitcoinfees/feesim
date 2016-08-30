@@ -46,7 +46,7 @@ Commands:
 
 const (
 	coin    = 100000000
-	version = "0.1.2"
+	version = "0.2.0"
 )
 
 func main() {

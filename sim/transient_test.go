@@ -25,7 +25,10 @@ func TestTransient(t *testing.T) {
 	// This one was before BlockSource.Next time.Duration high-res tweak
 	//feeref := []FeeRate{37736, 29667, 20430, 14948, 13587, 11423, 11326, 11326, 11199, 10969, 10788, 10054, 10018, 10018, 10018, 10012, 10012, 8434}
 
-	feeref := []FeeRate{38760, 29586, 20577, 16598, 13387, 11423, 11326, 11326, 10765, 10194, 10194, 10125, 10012, 10012, 10012, 10007, 10007, 10006}
+	// This one was before CPFP changes
+	//feeref := []FeeRate{38760, 29586, 20577, 16598, 13387, 11423, 11326, 11326, 10765, 10194, 10194, 10125, 10012, 10012, 10012, 10007, 10007, 10006}
+
+	feeref := []FeeRate{38760, 29627, 20662, 16864, 13720, 13587, 12516, 12516, 10765, 10018, 10018, 10018, 10012, 10012, 10012, 10010, 10010, 10006}
 	c := TransientConfig{
 		MaxBlockConfirms: 18,
 		MinSuccessPct:    0.9,
@@ -63,7 +66,7 @@ func TestTransient(t *testing.T) {
 
 	// Test with some BlockPolicy.MinFeeRate == MaxFeeRate
 	feeref = []FeeRate{
-		-1, -1, -1, 50065, 44445, 44391, 44248, 44248, 44248, 44248, 39216,
+		-1, -1, -1, 50065, 44445, 44401, 44248, 44248, 44248, 44248, 39216,
 		38388, 38388, 38388, 38388, 36102, 29851, 29851}
 	blksrc = NewIndBlockSource([]FeeRate{MaxFeeRate, 1000}, []TxSize{1e6}, 1./600.)
 	txsrc = loadMultiTxSource()

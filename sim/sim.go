@@ -43,6 +43,19 @@ type Sim struct {
 // NewSim ... initmempool must be closed; i.e. SimMempoolTx Children must be
 // contained in initmempool.
 func NewSim(txsource TxSource, blocksource BlockSource, initmempool []*Tx) *Sim {
+	// Starting with v0.2.0, we pretend that all initial mempool transactions
+	// have no mempool dependencies (i.e. all its txins are already in-chain). This
+	// is due to Bitcoin Core's addition of child-pays-for-parent (CPFP) in v0.13.0;
+	// ideally we would want to model CPFP here as well, but I think the added model
+	// fidelity is not worth the extra computation cost - the mempool dependencies
+	// of tx arrivals aren't modeled anyway.
+	// Eventually we'll want to clean up the code to remove all the now-obsolete
+	// pre-CPFP logic, but we're leaving it in for now because we might change our
+	// minds about modeling CPFP, which would necessitate a large overhaul.
+	for _, tx := range initmempool {
+		tx.Parents = tx.Parents[:0]
+	}
+
 	// Calculate the stable fee rate. All tx arrivals with fee rate less than
 	// this are discarded. This is a necessary but not sufficient condition
 	// for sim stability; You should take measures elsewhere to bound the
