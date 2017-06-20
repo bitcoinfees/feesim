@@ -32,17 +32,16 @@ type IndBlockSourceConfig struct {
 	TailPct       float64 `yaml:"tailpct" json:"tailpct"`
 }
 
-// IndBlockSource returns an estimate of sim.IndBlockSource based on
-// BlockStats from heights [height-window+1, height].
-func IndBlockSource(height int64, c IndBlockSourceConfig, db BlockStatDB) (*sim.IndBlockSource, error) {
+// Helper function
+func calcStats(height int64, c IndBlockSourceConfig, db BlockStatDB) ([]sim.FeeRate, []sim.TxSize, float64, error) {
 	// Check block coverage
 	b, err := db.Get(height-c.Window+1, height)
 	if err != nil {
-		return nil, err
+		return nil, nil, 0, err
 	}
 	cov := float64(len(b)) / float64(c.Window)
 	if cov < c.MinCov {
-		return nil, BlockCoverageError{cov: cov, minCov: c.MinCov, window: c.Window}
+		return nil, nil, 0, BlockCoverageError{cov: cov, minCov: c.MinCov, window: c.Window}
 	}
 
 	totalhashes := float64(0)
@@ -90,7 +89,7 @@ func IndBlockSource(height int64, c IndBlockSourceConfig, db BlockStatDB) (*sim.
 	}
 
 	if len(sfrdata) == 0 {
-		return nil, ErrInsufficientBlocks
+		return nil, nil, 0, ErrInsufficientBlocks
 	}
 	sort.Sort(sizedata)
 	sort.Sort(sfrdata)
@@ -111,7 +110,39 @@ func IndBlockSource(height int64, c IndBlockSourceConfig, db BlockStatDB) (*sim.
 	winend := b[len(b)-1].Time
 	hashrate := totalhashes / float64(winend-winstart)
 	blockrate := hashrate / b[len(b)-1].NumHashes
+	return minfeerates, maxblocksizes, blockrate, nil
+}
 
+// IndBlockSource returns an estimate of sim.IndBlockSource based on
+// BlockStats from heights [height-window+1, height].
+func IndBlockSource(height int64, c IndBlockSourceConfig, db BlockStatDB) (*sim.IndBlockSource, error) {
+
+	minfeerates, maxblocksizes, blockrate, err := calcStats(height, c, db)
+	if err != nil {
+		return nil, err
+	}
+	return sim.NewIndBlockSource(minfeerates, maxblocksizes, blockrate), nil
+}
+
+// IndBlockSourceSMFR is IndBlockSource with a static minfeerate.
+// The reason for this is that the miner policy estimation wasn't designed to work with constantly full blocks.
+// Constantly full blocks causes minfeerate policy estimates to be inflated, which in turn inflates fee estimates.
+// To avoid this, we just assume that miner minfeerates are equal to the lowest observed sfr.
+func IndBlockSourceSMFR(height int64, c IndBlockSourceConfig, db BlockStatDB) (*sim.IndBlockSource, error) {
+	minfeerates, maxblocksizes, blockrate, err := calcStats(height, c, db)
+	if err != nil {
+		return nil, err
+	}
+	// Get the min of minfeerates
+	l := sim.MaxFeeRate
+	for _, f := range minfeerates {
+		if f < l {
+			l = f
+		}
+	}
+	for i := range minfeerates {
+		minfeerates[i] = l
+	}
 	return sim.NewIndBlockSource(minfeerates, maxblocksizes, blockrate), nil
 }
 

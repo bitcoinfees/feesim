@@ -46,7 +46,7 @@ Commands:
 
 const (
 	coin    = 100000000
-	version = "0.2.1"
+	version = "0.3.0"
 )
 
 func main() {
@@ -227,7 +227,7 @@ func loadTxSourceEstimator(db est.TxDB, cfg config) (est.TxSourceEstimator, erro
 
 func loadBlockSourceEstimator(db est.BlockStatDB, cfg config) (est.BlockSourceEstimator, error) {
 	estBlk := func(h int64) (sim.BlockSource, error) {
-		return est.IndBlockSource(h, cfg.IndBlock, db)
+		return est.IndBlockSourceSMFR(h, cfg.IndBlock, db)
 	}
 	return estBlk, nil
 }

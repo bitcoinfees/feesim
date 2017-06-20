@@ -72,3 +72,37 @@ func TestIndBlockSource(t *testing.T) {
 	}
 	t.Log(err)
 }
+
+func TestIndBlockSourceSMFR(t *testing.T) {
+	db := &BlockStatMemDB{}
+	db.init()
+	height := db.bestHeight()
+	c := IndBlockSourceConfig{
+		Window:        2016,
+		MinCov:        0.9,
+		GuardInterval: 300,
+		TailPct:       0.1,
+	}
+	blksrc, err := IndBlockSourceSMFR(height, c, db)
+	if err != nil {
+		t.Fatal(err)
+	}
+	capfn := blksrc.RateFn()
+	xref := []float64{
+		4999, 5000, math.MaxFloat64}
+	yref := []float64{
+		0, 1498, 1498}
+	for i, x := range xref {
+		if err := testutil.CheckEqual(int(capfn.Eval(x)), int(yref[i])); err != nil {
+			t.Error(err)
+		}
+	}
+
+	// Test coverage error
+	c.MinCov = 0.999
+	_, err = IndBlockSourceSMFR(height, c, db)
+	if _, ok := err.(BlockCoverageError); !ok {
+		t.Fatal("Coverage error not returned.")
+	}
+	t.Log(err)
+}
