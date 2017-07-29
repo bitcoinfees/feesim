@@ -44,7 +44,7 @@ func (m *MempoolEntry) IsHighPriority() bool {
 
 type block struct {
 	Height_    int64    `json:"height"`
-	Size_      int64    `json:"size"`
+	Size_      int64    `json:"weight"`
 	Txids_     []string `json:"tx"`
 	Difficulty float64  `json:"difficulty"`
 }
@@ -54,9 +54,9 @@ func (b *block) Height() int64 {
 	return b.Height_
 }
 
-// Size returns the block size.
+// Size returns the virtual block size (i.e. weight / 4)
 func (b *block) Size() int64 {
-	return b.Size_
+	return b.Size_ / 4
 }
 
 // Txids returns a slice of the block txids. User is free to do whatever with it,

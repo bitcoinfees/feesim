@@ -51,7 +51,7 @@ Feesim uses the Go 1.5 vendor experiment, so alternatively you can install with
 Go 1.5 by setting the environment variable `GO15VENDOREXPERIMENT=1`.
 
 ### Running
-Feesim requires JSON-RPC access to a Bitcoin Core node (which can be pruned).
+Feesim requires JSON-RPC access to a Bitcoin Core node (version >0.13.0, which can be pruned).
 The RPC settings should be specified in `config.yml`, as such:
 ```yml
 bitcoinrpc:
