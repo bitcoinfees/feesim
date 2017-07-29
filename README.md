@@ -24,9 +24,11 @@ fees during the lull periods.
 Feesim collects Bitcoin network data through the Bitcoin Core JSON-RPC API, and
 computes estimates for:
 * The network hashrate
-* The distribution of max block size and min fee rate ("mining policy")
+* The distribution of max block size ~~and min fee rate~~\* ("mining policy")
 * Short-term transaction arrival rate / joint distribution of `(txFeerate,
   txSize)`
+
+\*See commit d895e64
 
 Together with the current mempool state, these are used to perform the
 simulation and obtain the fee estimates. Mining policy estimates can be seen
@@ -51,7 +53,7 @@ Feesim uses the Go 1.5 vendor experiment, so alternatively you can install with
 Go 1.5 by setting the environment variable `GO15VENDOREXPERIMENT=1`.
 
 ### Running
-Feesim requires JSON-RPC access to a Bitcoin Core node (which can be pruned).
+Feesim requires JSON-RPC access to a Bitcoin Core node (version >0.13.0, which can be pruned).
 The RPC settings should be specified in `config.yml`, as such:
 ```yml
 bitcoinrpc:
@@ -117,12 +119,17 @@ $ bitcoin-cli -rpcport=8350 estimatefee 1
 
 ### Bitcoin Core minrelaytxfee
 
-Feesim will not produce fee estimates that are lower than the `minrelaytxfee` of
-the Bitcoin Core node you are connecting to; you should thus set `minrelaytxfee`
-accordingly. Also, if you change `minrelaytxfee`, you will need to restart
-Feesim so that the changes can be registered.
+Feesim currently assumes that miners have the same minrelaytxfee as your node,
+so don't set it too low, or else wait time estimates for low fees will be
+inaccurate. Staying with the defaults should be OK. See commit d895e64 for details.
 
-### CPU considerations
+### CPU and memory considerations
+
+You may want to configure Bitcoin Core's `maxmempool` to be lower than the default,
+as this will make the simulation faster and require less memory. `maxmempool=100`
+is fine if you stick with the default feesim settings (specifically maxblockconfirms).
+THe downside is having less comprehensive mempool data.
+
 The simulation is CPU intensive, whereas data collection is not, so you may not
 want to run the sim all the time, while still collecting data. To do this, use
 `feesim pause` to pause the simulation, and `feesim unpause` to resume.
