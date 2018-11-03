@@ -95,7 +95,7 @@ func (r *client) newRequest(method string, params interface{}) *request {
 
 func (c *client) getInfo() (map[string]interface{}, error) {
 	var info map[string]interface{}
-	req := c.newRequest("getinfo", nil)
+	req := c.newRequest("getnetworkinfo", nil)
 	res, err := c.send(req)
 	if err != nil {
 		return nil, err

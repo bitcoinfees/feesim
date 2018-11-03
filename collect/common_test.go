@@ -101,6 +101,7 @@ func unpruneAssert(txid string, entries map[string]MempoolEntry, thresh sim.FeeR
 	return nil
 }
 
+// The reason why this is failing is due to commit 7db23474 I think
 func TestSimifyMempool(t *testing.T) {
 	// This is copied from sim.TestSimSFR
 	const (

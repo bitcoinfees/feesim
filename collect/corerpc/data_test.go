@@ -13,7 +13,6 @@ func TestMempoolEntry(t *testing.T) {
 		Fee:             0.0001,
 		Depends_:        []string{"0", "1"},
 		Time_:           300,
-		CurrentPriority: 57600001,
 	}
 
 	f := entry.FeeRate()
@@ -21,7 +20,7 @@ func TestMempoolEntry(t *testing.T) {
 		t.Error(err)
 	}
 	p := entry.IsHighPriority()
-	if err := testutil.CheckEqual(p, true); err != nil {
+	if err := testutil.CheckEqual(p, false); err != nil {
 		t.Error(err)
 	}
 	tm := entry.Time()

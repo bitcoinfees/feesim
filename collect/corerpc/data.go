@@ -9,6 +9,8 @@ const (
 	coin           = 100000000
 )
 
+// There is no longer any concept of priority in Bitcoin Core
+// So any mention of priority here is vestigial
 type MempoolEntry struct {
 	Size_           int64    `json:"size"`
 	Time_           int64    `json:"time"`
@@ -39,7 +41,8 @@ func (m *MempoolEntry) Depends() []string {
 // Whether or not the tx is "high priority". We don't want to use these txs to
 // estimate miner's min fee rate policies.
 func (m *MempoolEntry) IsHighPriority() bool {
-	return m.CurrentPriority > priorityThresh
+	// Vestigial since there is no longer any concept of priority in Bitcoin Core
+	return false
 }
 
 type block struct {

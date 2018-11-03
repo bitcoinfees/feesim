@@ -122,7 +122,7 @@ func TestRPC(t *testing.T) {
 	}
 	// Unlikely to happen
 	if maxtx.Size() == 0 || maxtx.Fee == 0 || maxtx.Time() == 0 ||
-		maxtx.CurrentPriority == 0 || len(maxtx.Depends()) == 0 {
+		len(maxtx.Depends()) == 0 {
 		t.Error("Empty fields.")
 	}
 
